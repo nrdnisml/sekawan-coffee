@@ -1,0 +1,144 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Product;
+use App\Models\TransactionItem;
+use App\Models\User;
+use App\Livewire\Products\ProductList;
+use App\Livewire\Products\ProductForm;
+use Livewire\Livewire;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class ProductManagementTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
+    }
+
+    public function test_can_view_products_list(): void
+    {
+        Product::factory()->count(3)->create();
+
+        $this->get(route('products.index'))
+            ->assertStatus(200)
+            ->assertSee('Product Catalog');
+    }
+
+    public function test_can_toggle_product_status(): void
+    {
+        $product = Product::factory()->create(['is_active' => true]);
+
+        Livewire::test(ProductList::class)
+            ->call('toggleStatus', $product->id)
+            ->assertHasNoErrors();
+
+        $this->assertFalse($product->fresh()->is_active);
+    }
+
+    public function test_can_delete_product_without_history(): void
+    {
+        $product = Product::factory()->create();
+
+        Livewire::test(ProductList::class)
+            ->set('productToDelete', $product->id)
+            ->call('deleteProduct')
+            ->assertHasNoErrors();
+
+        $this->assertEquals(0, Product::count());
+    }
+
+    public function test_cannot_delete_product_with_history(): void
+    {
+        $product = Product::factory()->create();
+        
+        $transaction = \App\Models\Transaction::create([
+            'transaction_code' => 'TRX-001',
+            'user_id' => $this->user->id,
+            'total_amount' => $product->price,
+            'paid_amount' => $product->price,
+            'change_amount' => 0,
+            'payment_method' => 'cash',
+            'status' => 'completed',
+            'transaction_date' => now(),
+        ]);
+
+        TransactionItem::create([
+            'transaction_id' => $transaction->id,
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'quantity' => 1,
+            'price' => $product->price,
+            'subtotal' => $product->price,
+        ]);
+
+        Livewire::test(ProductList::class)
+            ->set('productToDelete', $product->id)
+            ->call('deleteProduct')
+            ->assertDispatched('toast-show');
+
+        $this->assertEquals(1, Product::count());
+    }
+
+    public function test_can_create_product_via_form(): void
+    {
+        Livewire::test(ProductForm::class)
+            ->set('name', 'New Coffee')
+            ->set('price', 5.50)
+            ->set('description', 'Delicious coffee')
+            ->call('save')
+            ->assertDispatched('product-saved');
+
+        $this->assertTrue(Product::where('name', 'New Coffee')->exists());
+    }
+
+    public function test_can_filter_products_by_name(): void
+    {
+        Product::factory()->create(['name' => 'Americano']);
+        Product::factory()->create(['name' => 'Latte']);
+
+        Livewire::test(ProductList::class)
+            ->set('filters.name', 'Amer')
+            ->assertSee('Americano')
+            ->assertDontSee('Latte');
+    }
+
+    public function test_can_create_product_with_image(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        $file = \Illuminate\Http\UploadedFile::fake()->image('coffee.jpg');
+
+        Livewire::test(ProductForm::class)
+            ->set('name', 'Coffee with Image')
+            ->set('price', 6.00)
+            ->set('image', $file)
+            ->call('save')
+            ->assertDispatched('product-saved');
+
+        $product = Product::where('name', 'Coffee with Image')->first();
+        $this->assertNotNull($product->getRawOriginal('image_url'));
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($product->getRawOriginal('image_url'));
+    }
+
+    public function test_can_sort_products_by_price(): void
+    {
+        Product::factory()->create(['name' => 'Cheap Coffee', 'price' => 10]);
+        Product::factory()->create(['name' => 'Expensive Coffee', 'price' => 50]);
+
+        Livewire::test(ProductList::class)
+            ->set('sortField', 'price')
+            ->set('sortDirection', 'asc')
+            ->assertSeeInOrder(['Cheap Coffee', 'Expensive Coffee'])
+            ->set('sortDirection', 'desc')
+            ->assertSeeInOrder(['Expensive Coffee', 'Cheap Coffee']);
+    }
+}
