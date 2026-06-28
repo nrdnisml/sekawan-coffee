@@ -12,27 +12,29 @@
                     @endif
                     
                     <label class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-sm font-medium">
-                        Change Image
+                        Ganti Gambar
                         <input type="file" wire:model="image" class="hidden" accept="image/*">
                     </label>
                 </div>
-                <div wire:loading wire:target="image" class="mt-2 text-xs text-zinc-500">Uploading...</div>
+                <div wire:loading wire:target="image" class="mt-2 text-xs text-zinc-500">Mengunggah gambar...</div>
                 @error('image') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
             </div>
         </div>
 
         <div class="flex-1 space-y-6">
-            <flux:input wire:model="name" label="Product Name" placeholder="e.g. Arabica Beans" />
+            <flux:input wire:model="name" label="Nama Produk" placeholder="Contoh: Arabika Gayo" />
 
-            <flux:textarea wire:model="description" label="Description" placeholder="Brief description of the product..." rows="3" />
+            <flux:textarea wire:model="description" label="Deskripsi" placeholder="Tulis deskripsi singkat produk..." rows="3" />
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <flux:input type="number" step="0.01" wire:model="price" label="Price" icon="banknotes" />
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <flux:input type="number" step="0.01" wire:model="price" label="Harga" icon="banknotes" />
+
+        <flux:input type="number" min="0" step="1" wire:model="stock" label="Stok Awal" icon="archive-box" />
 
         <div class="flex items-center pt-8">
-            <flux:checkbox wire:model="is_active" label="Product is active" />
+            <flux:checkbox wire:model="is_active" label="Produk aktif" />
         </div>
     </div>
 
@@ -40,11 +42,11 @@
         <flux:spacer />
 
         <flux:modal.close>
-            <flux:button variant="ghost">Cancel</flux:button>
+            <flux:button variant="ghost">Batal</flux:button>
         </flux:modal.close>
 
         <flux:button type="submit" variant="filled" color="accent">
-            {{ $productId ? 'Update Product' : 'Create Product' }}
+            {{ $productId ? 'Simpan Perubahan' : 'Tambah Produk' }}
         </flux:button>
     </div>
 </form>

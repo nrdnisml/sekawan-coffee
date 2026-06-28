@@ -41,7 +41,13 @@ class StockService
     protected function moveStock(int $productId, int $quantity, string $type, string $referenceType, ?int $referenceId, ?string $note): void
     {
         DB::transaction(function () use ($productId, $quantity, $type, $referenceType, $referenceId, $note) {
-            $product = Product::findOrFail($productId);
+            $product = Product::query()
+                ->lockForUpdate()
+                ->find($productId);
+
+            if (! $product) {
+                throw new Exception('Produk yang dipilih sudah tidak tersedia.');
+            }
 
             if ($type === 'adjustment') {
                 $product->stock = abs($quantity);
@@ -49,7 +55,7 @@ class StockService
             } elseif ($type === 'out') {
                 $absQuantity = abs($quantity);
                 if ($product->stock < $absQuantity) {
-                    throw new Exception("Insufficient stock for product: {$product->name}");
+                    throw new Exception("Stok produk {$product->name} tidak mencukupi.");
                 }
                 $product->decrement('stock', $absQuantity);
             } else {

@@ -1,0 +1,61 @@
+- main [ref=e3]:
+  - region "Masuk ke meja kerja Sekawan Coffee dengan ritme yang tenang dan premium." [ref=e4]:
+    - link "Sekawan Coffee Ruang operasional kedai" [ref=e6] [cursor=pointer]:
+      - /url: http://127.0.0.1:8081
+      - generic [ref=e7]: Sekawan Coffee
+      - generic [ref=e8]: Ruang operasional kedai
+    - generic [ref=e9]:
+      - paragraph [ref=e10]: Hangat, rapi, siap dipakai setiap buka shift
+      - heading "Masuk ke meja kerja Sekawan Coffee dengan ritme yang tenang dan premium." [level=1] [ref=e11]
+      - paragraph [ref=e12]: Pantau pesanan, cek stok, dan mulai pelayanan dari satu ruang login yang terasa seperti meja bar yang sudah siap sebelum pelanggan pertama datang.
+    - generic [ref=e13]:
+      - figure "Identitas visual utama yang menyambut admin dan kasir sejak layar pertama." [ref=e14]:
+        - img "Logo Sekawan Coffee pada latar hangat yang mewakili identitas kedai" [ref=e15]
+        - generic [ref=e16]: Identitas visual utama yang menyambut admin dan kasir sejak layar pertama.
+      - generic "Keunggulan permukaan login" [ref=e17]:
+        - article [ref=e18]:
+          - paragraph [ref=e19]: Mode kerja
+          - paragraph [ref=e20]: Fokus untuk buka toko
+          - paragraph [ref=e21]: Permukaan split yang hangat menjaga form tetap terbaca sambil menegaskan brand Sekawan Coffee.
+        - article [ref=e22]:
+          - paragraph [ref=e23]: Untuk operasional harian
+          - list [ref=e24]:
+            - listitem [ref=e25]: Kasir dan admin langsung melihat form login tanpa langkah tambahan.
+            - listitem [ref=e26]: Logo brand tampil stabil dengan dimensi tetap agar tidak melonjak saat dimuat.
+            - listitem [ref=e27]: Shell otomatis menumpuk rapi di layar mobile dan tetap lapang di desktop.
+  - region "Form login Sekawan Coffee" [ref=e28]:
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - heading "Masuk ke akun Anda" [level=1] [ref=e32]
+        - paragraph [ref=e33]: Masukkan username dan kata sandi Anda untuk masuk
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - generic [ref=e36]: Username
+          - textbox "Username" [active] [ref=e38]:
+            - /placeholder: your.username
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - generic [ref=e41]: Kata Sandi
+            - textbox "Kata Sandi" [ref=e43]:
+              - /placeholder: Kata sandi
+          - link "Lupa kata sandi?" [ref=e44] [cursor=pointer]:
+            - /url: http://127.0.0.1:8081/forgot-password
+        - generic [ref=e45]:
+          - checkbox "Ingat saya" [ref=e46]
+          - generic [ref=e48]: Ingat saya
+        - button "Masuk" [ref=e50]:
+          - img [ref=e52]
+          - generic [ref=e55]: Masuk
+        - generic [ref=e56]:
+          - paragraph [ref=e57]: Login Cepat Dev
+          - generic [ref=e58]:
+            - button "Admin" [ref=e59]:
+              - img [ref=e61]
+              - generic [ref=e64]: Admin
+            - button "Cashier" [ref=e65]:
+              - img [ref=e67]
+              - generic [ref=e70]: Cashier
+      - generic [ref=e71]:
+        - text: Belum punya akun?
+        - link "Daftar" [ref=e72] [cursor=pointer]:
+          - /url: http://127.0.0.1:8081/register

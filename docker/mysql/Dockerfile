@@ -11,14 +11,9 @@ RUN mkdir -p /var/run/mysqld /var/lib/mysql && \
 EXPOSE 3306
 
 # Initialize database and start the server
-# We use a script to ensure the database is initialized if the volume is empty
-RUN echo '#!/bin/sh' > /usr/local/bin/entrypoint.sh && \
-    echo 'if [ ! -d "/var/lib/mysql/mysql" ]; then' >> /usr/local/bin/entrypoint.sh && \
-    echo '    echo "Initializing database..."' >> /usr/local/bin/entrypoint.sh && \
-    echo '    mysql_install_db --user=mysql --datadir=/var/lib/mysql > /dev/null' >> /usr/local/bin/entrypoint.sh && \
-    echo 'fi' >> /usr/local/bin/entrypoint.sh && \
-    echo 'exec mysqld --user=mysql --skip-name-resolve --skip-networking=0 --bind-address=0.0.0.0 "$@"' >> /usr/local/bin/entrypoint.sh && \
-    chmod +x /usr/local/bin/entrypoint.sh
+# The custom entrypoint bootstraps root/database/app user only on first init.
+COPY docker/mysql/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 USER mysql
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

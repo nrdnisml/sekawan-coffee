@@ -1,0 +1,92 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - heading "Knock Knock.." [level=2] [ref=e4]
+    - textbox "Who's there?" [ref=e5]
+    - button "Enter" [ref=e6] [cursor=pointer]
+  - generic:
+    - generic [ref=e8]:
+      - generic [ref=e9]: Dear Trisa...
+      - generic [ref=e10]:
+        - text: Sending you this message first thing in the morning.
+        - text: Wondering if, after reading it, your day will turn brighter or…
+        - text: well, maybe not hahaha
+        - text: Only God knows. Either way, I hope it at least makes you smile 😊
+        - generic [ref=e11]: For sure, I really hope...
+      - img "img"
+    - generic [ref=e13]:
+      - generic [ref=e14]: First of All...
+      - generic [ref=e15]:
+        - text: I actually wrote this message about a year ago, but didn’t have the courage to send it. Even after asked few times to my friends.
+        - text: If I once said, “Been thinking about you from AM to PM, then I decided to DM,”
+        - text: the truth is I’ve been thinking about you since I feel like I know you well, and only now decided to finally send this.
+        - button "I code this overnight" [ref=e16] [cursor=pointer]
+      - img "img"
+    - generic [ref=e18]:
+      - generic [ref=e19]: People say...
+      - generic [ref=e20]:
+        - text: I’m a failed Gemini. Maybe they’re right. So forgive me if I’m a little nerdy or cringe 😅
+        - text: But let me express this in my own way.
+        - text: Please, keep dragging.
+    - generic [ref=e22]:
+      - generic [ref=e23]: If you still remember…
+      - generic [ref=e24]:
+        - text: The last time we were really in touch was when I was in Cangar—a place I used to go to clear my head back in college.
+        - text: You said, “now it’s the working version of you.”
+        - text: Simple words, but it made me think a lot.
+    - generic [ref=e26]:
+      - generic [ref=e27]: At that moment,
+      - generic [ref=e28]:
+        - text: I was thinking about many things, including how I felt about you.
+        - text: That’s when I realized I had truly fallen for you.
+        - text: But my thoughts were too complicated, so I chose to stay silent for a while;
+        - text: turns out, it became too long… until you were the one who asked about my intentions.
+    - generic [ref=e30]:
+      - generic [ref=e31]: I answered with a lot of excuses…
+      - generic [ref=e32]:
+        - text: Career, finances, other priorities, those were just excuses.
+        - text: The truth is, I was afraid and realized. I realized I had ignored you for too long and might have hurt you.
+        - text: Then I was afraid of failing, of being left by someone I love. like I wasn’t enough, like something in me was still missing
+        - text: I’m sorry for that version of me.
+    - generic [ref=e34]:
+      - generic [ref=e35]: A journey…
+      - generic [ref=e36]:
+        - text: I started searching for answers to my fears.
+        - text: I went on random places. Sometimes going alone, sometimes with random people. And I realized that I had been arrogant. Too afraid of the future, as if I had control over it. But I don’t.
+        - text: I can only do my part and trust that what’s meant for me; love, provision, even the end of my life is not mine to decide.
+        - text: Because I'm just a "Hamba" then I know God is the one who decides everything.
+    - generic [ref=e38]:
+      - generic [ref=e39]: Watch This 🎥
+      - generic [ref=e40]: "02"
+      - generic [ref=e41]: Your browser does not support the video tag.
+    - generic [ref=e43]:
+      - generic [ref=e44]: I just want you to know…
+      - generic [ref=e45]:
+        - text: I’ve truly fallen for you. I’m not sure exactly when or why.
+        - text: Maybe it was when we started opening up about our lives, or when you asked me so many questions.
+        - text: Or Maybe it’s just that you're a woman who is fun and easygoing, but strong in what you believe, always thinking with a kind of honesty I don’t see often.
+        - text: All I know is… I’ve fallen.
+    - generic [ref=e47]:
+      - generic [ref=e48]: Then...
+      - generic [ref=e49]:
+        - text: I may not be extraordinary compared to other men out there, but I know I can fight for the happiness of the one I love.
+        - text: Simply because that's exactly how I've been raised. To cherish and protect those who matter to me.
+    - generic [ref=e51]:
+      - generic [ref=e52]: So...
+      - generic [ref=e53]:
+        - text: I only hope to know if there’s a chance for us to be together.
+        - text: Whatever you feel in your heart, I’ll respect it.
+        - text: What matters most to me is having the clarity to gently guide my heart and know how to move forward.
+    - generic [ref=e55]:
+      - generic [ref=e56]: This is my first time,
+      - generic [ref=e57]:
+        - text: To express my feeling towards woman who I truly love.
+        - text: So it might be a little awkward hahaha..
+        - text: If Bandung Bondowoso could build a thousand temples in one night, I could only make this in one night.
+        - text: But both were built for the same reason to love.
+    - generic [ref=e59]:
+      - generic [ref=e60]: Your Message, Please 💌
+      - generic [ref=e62]:
+        - textbox "Write something here... whenever you want to. I’ll read it all." [ref=e63]
+        - button "Send" [ref=e64] [cursor=pointer]
+  - generic:
+    - generic: Hehehe....

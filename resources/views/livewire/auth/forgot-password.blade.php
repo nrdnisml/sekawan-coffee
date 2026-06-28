@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Password;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.auth')] class extends Component {
+new #[Layout('components.layouts.auth')] class extends Component
+{
     public string $email = '';
 
     /**
@@ -23,7 +24,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-6">
-    <x-auth-header title="Forgot password" description="Enter your email to receive a password reset link" />
+    <x-auth-header title="Lupa kata sandi" description="Masukkan email Anda untuk menerima tautan reset kata sandi" />
 
     <!-- Session Status -->
     <x-auth-session-status class="text-center" :status="session('status')" />
@@ -31,14 +32,14 @@ new #[Layout('components.layouts.auth')] class extends Component {
     <form wire:submit="sendPasswordResetLink" class="flex flex-col gap-6">
         <!-- Email Address -->
         <div class="grid gap-2">
-            <flux:input wire:model="email" label="{{ __('Email Address') }}" type="email" name="email" required autofocus placeholder="email@example.com" />
+            <flux:input wire:model="email" label="{{ __('Alamat Email') }}" type="email" name="email" required autofocus placeholder="email@example.com" />
         </div>
 
-        <flux:button variant="primary" type="submit" class="w-full">{{ __('Email password reset link') }}</flux:button>
+        <flux:button variant="primary" type="submit" class="w-full">{{ __('Kirim tautan reset kata sandi') }}</flux:button>
     </form>
 
     <div class="space-x-1 text-center text-sm text-zinc-400">
-        Or, return to
-        <x-text-link href="{{ route('login') }}">log in</x-text-link>
+        Atau, kembali ke
+        <x-text-link href="{{ route('login') }}">halaman masuk</x-text-link>
     </div>
 </div>

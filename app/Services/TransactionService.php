@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Models\Transaction;
-use App\Models\TransactionItem;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -14,8 +13,7 @@ class TransactionService
     public function __construct(
         protected StockService $stockService,
         protected AuditService $auditService
-    ) {
-    }
+    ) {}
 
     /**
      * Create a new transaction.
@@ -24,7 +22,7 @@ class TransactionService
     {
         return DB::transaction(function () use ($userId, $items, $paymentMethod, $paidAmount) {
             if (empty($items)) {
-                throw new Exception("Transaction items cannot be empty.");
+                throw new Exception('Item transaksi tidak boleh kosong.');
             }
 
             $totalAmount = 0;
@@ -32,13 +30,13 @@ class TransactionService
 
             foreach ($items as $item) {
                 $product = Product::findOrFail($item['product_id']);
-                
-                if (!$product->is_active) {
-                    throw new Exception("Product {$product->name} is not active.");
+
+                if (! $product->is_active) {
+                    throw new Exception("Produk {$product->name} sedang tidak aktif.");
                 }
 
                 if ($product->stock < $item['quantity']) {
-                    throw new Exception("Insufficient stock for product: {$product->name}");
+                    throw new Exception("Stok produk {$product->name} tidak mencukupi.");
                 }
 
                 $subtotal = $product->price * $item['quantity'];
@@ -54,13 +52,13 @@ class TransactionService
             }
 
             if ($paidAmount < $totalAmount) {
-                throw new Exception("Paid amount is less than total amount.");
+                throw new Exception('Jumlah bayar lebih kecil dari total belanja.');
             }
 
             $changeAmount = $paidAmount - $totalAmount;
 
             $transaction = Transaction::create([
-                'transaction_code' => 'TXN-' . strtoupper(Str::random(10)),
+                'transaction_code' => 'TXN-'.strtoupper(Str::random(10)),
                 'user_id' => $userId,
                 'total_amount' => $totalAmount,
                 'paid_amount' => $paidAmount,
@@ -75,7 +73,7 @@ class TransactionService
                 $this->stockService->decreaseStock($pItem['product_id'], $pItem['quantity'], 'transaction', $transaction->id);
             }
 
-            $this->auditService->log($userId, 'create', 'transactions', $transaction->id, "Created transaction {$transaction->transaction_code}");
+            $this->auditService->log($userId, 'create', 'transactions', $transaction->id, "Membuat transaksi {$transaction->transaction_code}");
 
             return $transaction;
         });
@@ -90,16 +88,16 @@ class TransactionService
             $transaction = Transaction::findOrFail($transactionId);
 
             if ($transaction->status !== 'completed') {
-                throw new Exception("Only completed transactions can be cancelled.");
+                throw new Exception('Hanya transaksi selesai yang dapat dibatalkan.');
             }
 
             $transaction->update(['status' => 'cancelled']);
 
             foreach ($transaction->items as $item) {
-                $this->stockService->increaseStock($item->product_id, $item->quantity, 'transaction', $transaction->id, "Restored stock from cancelled transaction: {$transaction->transaction_code}");
+                $this->stockService->increaseStock($item->product_id, $item->quantity, 'transaction', $transaction->id, "Stok dipulihkan dari transaksi batal: {$transaction->transaction_code}");
             }
 
-            $this->auditService->log($transaction->user_id, 'cancel', 'transactions', $transaction->id, "Cancelled transaction {$transaction->transaction_code}");
+            $this->auditService->log($transaction->user_id, 'cancel', 'transactions', $transaction->id, "Membatalkan transaksi {$transaction->transaction_code}");
 
             return $transaction;
         });
@@ -114,16 +112,16 @@ class TransactionService
             $transaction = Transaction::findOrFail($transactionId);
 
             if ($transaction->status !== 'completed') {
-                throw new Exception("Only completed transactions can be refunded.");
+                throw new Exception('Hanya transaksi selesai yang dapat di-refund.');
             }
 
             $transaction->update(['status' => 'refunded']);
 
             foreach ($transaction->items as $item) {
-                $this->stockService->increaseStock($item->product_id, $item->quantity, 'transaction', $transaction->id, "Restored stock from refunded transaction: {$transaction->transaction_code}");
+                $this->stockService->increaseStock($item->product_id, $item->quantity, 'transaction', $transaction->id, "Stok dipulihkan dari transaksi refund: {$transaction->transaction_code}");
             }
 
-            $this->auditService->log($transaction->user_id, 'refund', 'transactions', $transaction->id, "Refunded transaction {$transaction->transaction_code}");
+            $this->auditService->log($transaction->user_id, 'refund', 'transactions', $transaction->id, "Melakukan refund transaksi {$transaction->transaction_code}");
 
             return $transaction;
         });

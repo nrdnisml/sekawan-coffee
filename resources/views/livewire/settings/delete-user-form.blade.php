@@ -1,22 +1,36 @@
 <?php
 
-use App\Livewire\Actions\Logout;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public string $password = '';
 
     /**
      * Delete the currently authenticated user.
      */
-    public function deleteUser(Logout $logout): void
+    public function deleteUser(): void
     {
         $this->validate([
             'password' => ['required', 'string', 'current_password'],
         ]);
 
-        tap(Auth::user(), $logout(...))->delete();
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if (! $user) {
+            $this->redirect('/', navigate: true);
+
+            return;
+        }
+
+        $user->delete();
+        Auth::logout();
+        Session::invalidate();
+        Session::regenerateToken();
 
         $this->redirect('/', navigate: true);
     }
@@ -24,34 +38,34 @@ new class extends Component {
 
 <section class="mt-10 space-y-6">
     <div class="relative mb-5">
-        <flux:heading>{{ __('Delete Account') }}</flux:heading>
-        <flux:subheading>{{ __('Delete your account and all of its resources') }}</flux:subheading>
+        <flux:heading>{{ __('Hapus Akun') }}</flux:heading>
+        <flux:subheading>{{ __('Hapus akun Anda beserta semua datanya') }}</flux:subheading>
     </div>
 
     <flux:modal.trigger name="confirm-user-deletion">
         <flux:button variant="danger" x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')">
-            {{ __('Delete Account') }}
+            {{ __('Hapus Akun') }}
         </flux:button>
     </flux:modal.trigger>
 
     <flux:modal name="confirm-user-deletion" :show="$errors->isNotEmpty()" focusable class="max-w-lg">
         <form wire:submit="deleteUser" class="space-y-6">
             <div>
-                <flux:heading size="lg">{{ __('Are you sure you want to delete your account?') }}</flux:heading>
+                <flux:heading size="lg">{{ __('Apakah Anda yakin ingin menghapus akun ini?') }}</flux:heading>
 
                 <flux:subheading>
-                    {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
+                    {{ __('Setelah akun dihapus, semua sumber daya dan data yang terkait akan ikut terhapus. Masukkan kata sandi Anda untuk mengonfirmasi penghapusan akun.') }}
                 </flux:subheading>
             </div>
 
-            <flux:input wire:model="password" id="password" label="{{ __('Password') }}" type="password" name="password" />
+            <flux:input wire:model="password" id="password" label="{{ __('Kata Sandi') }}" type="password" name="password" />
 
             <div class="flex justify-end space-x-2">
                 <flux:modal.close>
-                    <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
+                    <flux:button variant="filled">{{ __('Batal') }}</flux:button>
                 </flux:modal.close>
 
-                <flux:button variant="danger" type="submit">{{ __('Delete Account') }}</flux:button>
+                <flux:button variant="danger" type="submit">{{ __('Hapus Akun') }}</flux:button>
             </div>
         </form>
     </flux:modal>

@@ -5,7 +5,8 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.auth')] class extends Component {
+new #[Layout('components.layouts.auth')] class extends Component
+{
     public string $password = '';
 
     /**
@@ -34,8 +35,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
 <div class="flex flex-col gap-6">
     <x-auth-header
-        title="Confirm password"
-        description="This is a secure area of the application. Please confirm your password before continuing."
+        title="Konfirmasi kata sandi"
+        description="Ini adalah area aman aplikasi. Silakan konfirmasi kata sandi Anda sebelum melanjutkan."
     />
 
     <!-- Session Status -->
@@ -47,15 +48,15 @@ new #[Layout('components.layouts.auth')] class extends Component {
             <flux:input
                 wire:model="password"
                 id="password"
-                label="{{ __('Password') }}"
+                label="{{ __('Kata Sandi') }}"
                 type="password"
                 name="password"
                 required
                 autocomplete="new-password"
-                placeholder="Password"
+                placeholder="Kata sandi"
             />
         </div>
 
-        <flux:button variant="primary" type="submit" class="w-full">{{ __('Confirm') }}</flux:button>
+        <flux:button variant="primary" type="submit" class="w-full">{{ __('Konfirmasi') }}</flux:button>
     </form>
 </div>

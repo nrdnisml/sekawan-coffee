@@ -3,17 +3,19 @@
 namespace App\Livewire\Inventory;
 
 use App\Models\Product;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\On;
-use Livewire\Attributes\Layout;
 
 class InventoryList extends Component
 {
     use WithPagination;
 
     public $search = '';
+
     public $selectedProductId = null;
+
     public $adjustingProductId = null;
 
     protected $queryString = [
@@ -28,20 +30,20 @@ class InventoryList extends Component
     public function openAdjustmentModal($productId)
     {
         $this->adjustingProductId = $productId;
-        $this->dispatch('modal-opened', 'stock-adjustment-modal');
+        $this->js('$flux.modal("stock-adjustment-modal").show()');
     }
 
     public function openHistoryModal($productId)
     {
         $this->selectedProductId = $productId;
-        $this->dispatch('modal-opened', 'stock-movement-history-modal');
+        $this->js('$flux.modal("stock-movement-history-modal").show()');
     }
 
     #[On('stock-updated')]
     public function onStockUpdated()
     {
         $this->adjustingProductId = null;
-        $this->dispatch('close-modal', 'stock-adjustment-modal');
+        $this->js('$flux.modal("stock-adjustment-modal").close()');
     }
 
     #[Layout('components.layouts.app')]
@@ -49,7 +51,7 @@ class InventoryList extends Component
     {
         $products = Product::query()
             ->when($this->search, function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%');
+                $query->where('name', 'like', '%'.$this->search.'%');
             })
             ->paginate(10);
 

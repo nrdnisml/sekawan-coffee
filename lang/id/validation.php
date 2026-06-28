@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'accepted' => 'Kolom :attribute harus disetujui.',
+    'confirmed' => 'Konfirmasi :attribute tidak cocok.',
+    'current_password' => 'Kata sandi saat ini tidak sesuai.',
+    'email' => 'Kolom :attribute harus berupa alamat email yang valid.',
+    'exists' => ':attribute yang dipilih tidak valid.',
+    'image' => 'Kolom :attribute harus berupa gambar.',
+    'integer' => 'Kolom :attribute harus berupa angka bulat.',
+    'max' => [
+        'string' => 'Kolom :attribute maksimal :max karakter.',
+        'file' => 'Berkas :attribute maksimal :max kilobyte.',
+    ],
+    'min' => [
+        'string' => 'Kolom :attribute minimal :min karakter.',
+        'numeric' => 'Kolom :attribute minimal :min.',
+        'array' => 'Kolom :attribute minimal :min item.',
+    ],
+    'numeric' => 'Kolom :attribute harus berupa angka.',
+    'required' => 'Kolom :attribute wajib diisi.',
+    'string' => 'Kolom :attribute harus berupa teks.',
+    'unique' => ':attribute sudah digunakan.',
+    'attributes' => [
+        'name' => 'nama',
+        'username' => 'username',
+        'email' => 'email',
+        'password' => 'kata sandi',
+        'password_confirmation' => 'konfirmasi kata sandi',
+        'current_password' => 'kata sandi saat ini',
+        'description' => 'deskripsi',
+        'price' => 'harga',
+        'stock' => 'stok',
+        'image' => 'gambar',
+        'quantity' => 'jumlah',
+        'note' => 'catatan',
+        'paidAmount' => 'jumlah bayar',
+        'paymentMethod' => 'metode pembayaran',
+        'expense_date' => 'tanggal pengeluaran',
+        'amount' => 'jumlah',
+        'type' => 'jenis',
+    ],
+];

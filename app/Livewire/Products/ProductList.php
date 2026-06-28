@@ -6,18 +6,20 @@ use App\Models\Product;
 use App\Services\ProductService;
 use Flux\Concerns\InteractsWithComponents;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 class ProductList extends Component
 {
-    use WithPagination, InteractsWithComponents;
+    use InteractsWithComponents, WithPagination;
 
     public $selectedProductId;
+
     public $editingProductId = null;
+
     public $productToDelete = null;
 
     #[Url(history: true)]
@@ -68,7 +70,7 @@ class ProductList extends Component
 
     public function toggleFilters()
     {
-        $this->showFilters = !$this->showFilters;
+        $this->showFilters = ! $this->showFilters;
     }
 
     public function openAddModal()
@@ -91,16 +93,18 @@ class ProductList extends Component
 
     public function deleteProduct(ProductService $productService)
     {
-        if (!$this->productToDelete) return;
+        if (! $this->productToDelete) {
+            return;
+        }
 
         try {
             $product = Product::findOrFail($this->productToDelete);
             $productName = $product->name;
             $productService->deleteProduct($this->productToDelete);
-            
+
             $this->toast(
-                heading: 'Product Deleted',
-                text: "{$productName} has been removed from the catalog.",
+                heading: 'Produk Dihapus',
+                text: "{$productName} telah dihapus dari katalog.",
                 variant: 'success'
             );
 
@@ -108,8 +112,8 @@ class ProductList extends Component
             $this->productToDelete = null;
         } catch (\Exception $e) {
             $this->toast(
-                heading: 'Error',
-                text: 'Cannot delete: Product has sales history. Please deactivate it instead.',
+                heading: 'Gagal',
+                text: 'Produk tidak dapat dihapus karena sudah memiliki riwayat penjualan. Nonaktifkan produk sebagai gantinya.',
                 variant: 'danger'
             );
             $this->js('$flux.modal("delete-product-modal").close()');
@@ -120,12 +124,12 @@ class ProductList extends Component
     {
         $product = Product::findOrFail($productId);
         $productService->updateProduct($productId, [
-            'is_active' => !$product->is_active
+            'is_active' => ! $product->is_active,
         ]);
 
         $this->toast(
-            heading: 'Status Updated',
-            text: "{$product->name} status has been changed.",
+            heading: 'Status Diperbarui',
+            text: "Status {$product->name} berhasil diubah.",
             variant: 'success'
         );
     }
@@ -134,9 +138,9 @@ class ProductList extends Component
     public function handleProductSaved($message)
     {
         $this->js('$flux.modal("product-form-modal").close()');
-        
+
         $this->toast(
-            heading: 'Success',
+            heading: 'Berhasil',
             text: $message,
             variant: 'success'
         );
@@ -146,15 +150,15 @@ class ProductList extends Component
     {
         $query = Product::query()
             ->withCount('transactionItems')
-            ->when($this->filters['name'], fn($q) => $q->where('name', 'like', '%' . $this->filters['name'] . '%'))
-            ->when($this->filters['description'], fn($q) => $q->where('description', 'like', '%' . $this->filters['description'] . '%'))
-            ->when($this->filters['status'] !== '', fn($q) => $q->where('is_active', $this->filters['status']))
-            ->when($this->filters['min_price'], fn($q) => $q->where('price', '>=', $this->filters['min_price']))
-            ->when($this->filters['max_price'], fn($q) => $q->where('price', '<=', $this->filters['max_price']))
+            ->when($this->filters['name'], fn ($q) => $q->where('name', 'like', '%'.$this->filters['name'].'%'))
+            ->when($this->filters['description'], fn ($q) => $q->where('description', 'like', '%'.$this->filters['description'].'%'))
+            ->when($this->filters['status'] !== '', fn ($q) => $q->where('is_active', $this->filters['status']))
+            ->when($this->filters['min_price'], fn ($q) => $q->where('price', '>=', $this->filters['min_price']))
+            ->when($this->filters['max_price'], fn ($q) => $q->where('price', '<=', $this->filters['max_price']))
             ->orderBy($this->sortField, $this->sortDirection);
 
         return view('livewire.products.product-list', [
-            'products' => $query->paginate(10)
+            'products' => $query->paginate(10),
         ]);
     }
 }

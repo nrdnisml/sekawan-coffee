@@ -12,10 +12,17 @@
             </a>
 
             <flux:navlist variant="outline">
-                <flux:navlist.group heading="Platform" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>Dashboard</flux:navlist.item>
-                    <flux:navlist.item icon="shopping-bag" :href="route('products.index')" :current="request()->routeIs('products.*')" wire:navigate>Products</flux:navlist.item>
-                    <flux:navlist.item icon="archive-box" :href="route('inventory.index')" :current="request()->routeIs('inventory.*')" wire:navigate>Inventory</flux:navlist.item>
+                <flux:navlist.group heading="Aplikasi" class="grid">
+                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>Dasbor</flux:navlist.item>
+                    <flux:navlist.item icon="shopping-cart" :href="route('transactions.pos')" :current="request()->routeIs('transactions.pos')" wire:navigate>POS</flux:navlist.item>
+                    <flux:navlist.item icon="banknotes" :href="route('transactions.index')" :current="request()->routeIs('transactions.index')" wire:navigate>Transaksi</flux:navlist.item>
+                    <flux:navlist.item icon="shopping-bag" :href="route('products.index')" :current="request()->routeIs('products.*')" wire:navigate>Produk</flux:navlist.item>
+                    <flux:navlist.item icon="archive-box" :href="route('inventory.index')" :current="request()->routeIs('inventory.*')" wire:navigate>Inventaris</flux:navlist.item>
+                    @if (auth()->user()->role === 'admin')
+                        <flux:navlist.item icon="receipt-percent" :href="route('expenses.index')" :current="request()->routeIs('expenses.*')" wire:navigate>Pengeluaran</flux:navlist.item>
+                        <flux:navlist.item icon="users" :href="route('users.index')" :current="request()->routeIs('users.*')" wire:navigate>Pengguna</flux:navlist.item>
+                        <flux:navlist.item icon="document-text" :href="route('audit-logs.index')" :current="request()->routeIs('audit-logs.*')" wire:navigate>Log Audit</flux:navlist.item>
+                    @endif
                 </flux:navlist.group>
             </flux:navlist>
 
@@ -23,11 +30,11 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    Repository
+                    Repositori
                 </flux:navlist.item>
 
                 <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits" target="_blank">
-                    Documentation
+                    Dokumentasi
                 </flux:navlist.item>
             </flux:navlist>
 
@@ -62,7 +69,7 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item href="/settings/profile" icon="cog" wire:navigate>Settings</flux:menu.item>
+                        <flux:menu.item href="/settings/profile" icon="cog" wire:navigate>Pengaturan</flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />
@@ -70,7 +77,7 @@
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
+                            {{ __('Keluar') }}
                         </flux:menu.item>
                     </form>
                 </flux:menu>
@@ -112,7 +119,7 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item href="/settings/profile" icon="cog" wire:navigate>Settings</flux:menu.item>
+                        <flux:menu.item href="/settings/profile" icon="cog" wire:navigate>Pengaturan</flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />

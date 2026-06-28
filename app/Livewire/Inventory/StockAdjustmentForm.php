@@ -9,8 +9,11 @@ use Livewire\Component;
 class StockAdjustmentForm extends Component
 {
     public $productId;
+
     public $type = 'in';
+
     public $quantity = 1;
+
     public $note = '';
 
     protected $rules = [
@@ -36,7 +39,11 @@ class StockAdjustmentForm extends Component
             // Assuming Flux has a global toast or similar established in the project
             // For now, the parent handles modal closure.
         } catch (Exception $e) {
-            $this->addError('quantity', $e->getMessage());
+            $field = $e->getMessage() === 'Produk yang dipilih sudah tidak tersedia.'
+                ? 'productId'
+                : 'quantity';
+
+            $this->addError($field, $e->getMessage());
         }
     }
 

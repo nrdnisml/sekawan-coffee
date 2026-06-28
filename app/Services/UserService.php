@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    public function __construct(protected AuditService $auditService)
-    {
-    }
+    public function __construct(protected AuditService $auditService) {}
 
     /**
      * Create a new user.
@@ -20,16 +18,18 @@ class UserService
     {
         $this->ensureIsAdmin();
 
+        $password = $data['password'] ?? throw new Exception('Kata sandi wajib diisi.');
+
         $user = User::create([
             'name' => $data['name'],
             'username' => $data['username'],
-            'email' => $data['email'] ?? null,
-            'password' => Hash::make($data['password']),
+            'email' => filled($data['email'] ?? null) ? $data['email'] : null,
+            'password' => Hash::make($password),
             'role' => $data['role'] ?? 'cashier',
             'is_active' => $data['is_active'] ?? true,
         ]);
 
-        $this->auditService->log(Auth::id(), 'create', 'users', $user->id, "Created user: {$user->username}");
+        $this->auditService->log(Auth::id(), 'create', 'users', $user->id, "Menambahkan pengguna: {$user->username}");
 
         return $user;
     }
@@ -42,14 +42,20 @@ class UserService
         $this->ensureIsAdmin();
 
         $user = User::findOrFail($id);
-        
-        if (isset($data['password'])) {
+
+        if (! filled($data['email'] ?? null)) {
+            $data['email'] = null;
+        }
+
+        if (filled($data['password'] ?? null)) {
             $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
         }
 
         $user->update($data);
 
-        $this->auditService->log(Auth::id(), 'update', 'users', $user->id, "Updated user: {$user->username}");
+        $this->auditService->log(Auth::id(), 'update', 'users', $user->id, "Memperbarui pengguna: {$user->username}");
 
         return $user;
     }
@@ -62,14 +68,14 @@ class UserService
         $this->ensureIsAdmin();
 
         if (Auth::id() === $id) {
-            throw new Exception("Cannot delete your own account.");
+            throw new Exception('Anda tidak dapat menghapus akun sendiri.');
         }
 
         $user = User::findOrFail($id);
         $username = $user->username;
         $user->delete();
 
-        $this->auditService->log(Auth::id(), 'delete', 'users', $id, "Deleted user: {$username}");
+        $this->auditService->log(Auth::id(), 'delete', 'users', $id, "Menghapus pengguna: {$username}");
     }
 
     /**
@@ -78,8 +84,8 @@ class UserService
     protected function ensureIsAdmin(): void
     {
         $user = Auth::user();
-        if (!$user || $user->role !== 'admin') {
-            throw new Exception("Unauthorized. Only admins can manage users.");
+        if (! $user || $user->role !== 'admin') {
+            throw new Exception('Tidak diizinkan. Hanya admin yang dapat mengelola pengguna.');
         }
     }
 }

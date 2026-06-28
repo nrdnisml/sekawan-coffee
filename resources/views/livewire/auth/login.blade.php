@@ -1,7 +1,10 @@
 <?php
 
+use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
@@ -10,9 +13,10 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.auth')] class extends Component {
-    #[Validate('required|string|email')]
-    public string $email = '';
+new #[Layout('components.layouts.auth.root-login', ['title' => 'Sekawan Coffee — Login', 'metaDescription' => 'Masuk ke Sekawan Coffee untuk mengelola pesanan, stok, dan operasional toko.'])] class extends Component
+{
+    #[Validate('required|string')]
+    public string $username = '';
 
     #[Validate('required|string')]
     public string $password = '';
@@ -22,17 +26,19 @@ new #[Layout('components.layouts.auth')] class extends Component {
     /**
      * Handle an incoming authentication request.
      */
-    public function login(): void
+    public function login(AuthService $authService): void
     {
         $this->validate();
 
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        try {
+            $authService->login($this->username, $this->password);
+        } catch (Exception $exception) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'username' => $exception->getMessage(),
             ]);
         }
 
@@ -55,14 +61,14 @@ new #[Layout('components.layouts.auth')] class extends Component {
         $username = $role === 'admin' ? 'admin' : 'cashier';
         $name = $role === 'admin' ? 'Admin Sekawan' : 'Cashier Sekawan';
 
-        $user = \App\Models\User::where('email', $email)->first();
+        $user = User::where('username', $username)->first();
 
         if (! $user) {
-            $user = \App\Models\User::create([
+            $user = User::create([
                 'name' => $name,
                 'username' => $username,
                 'email' => $email,
-                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'password' => Hash::make('password'),
                 'role' => $role,
                 'is_active' => true,
             ]);
@@ -89,7 +95,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => __('auth.throttle', [
+            'username' => __('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -101,59 +107,61 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->username).'|'.request()->ip());
     }
 }; ?>
 
-<div class="flex flex-col gap-6">
-    <x-auth-header title="Log in to your account" description="Enter your email and password below to log in" />
+<div class="login-form-stack flex flex-col gap-6">
+    <div class="login-form-intro flex w-full flex-col gap-2 text-center">
+        <h1>Masuk ke akun Anda</h1>
+        <p>Masukkan username dan kata sandi Anda untuk masuk</p>
+    </div>
 
     <!-- Session Status -->
-    <x-auth-session-status class="text-center" :status="session('status')" />
+    <x-auth-session-status class="login-session-status text-center" :status="session('status')" />
 
-    <form wire:submit="login" class="flex flex-col gap-6">
-        <!-- Email Address -->
-        <flux:input wire:model="email" label="{{ __('Email address') }}" type="email" name="email" required autofocus autocomplete="email" placeholder="email@example.com" />
+    <form wire:submit="login" class="login-form-grid flex flex-col gap-6">
+        <flux:input wire:model="username" label="Username" type="text" name="username" required autofocus autocomplete="username" placeholder="your.username" />
 
         <!-- Password -->
         <div class="relative">
             <flux:input
                 wire:model="password"
-                label="{{ __('Password') }}"
+                label="{{ __('Kata Sandi') }}"
                 type="password"
                 name="password"
                 required
                 autocomplete="current-password"
-                placeholder="Password"
+                placeholder="Kata sandi"
             />
 
             @if (Route::has('password.request'))
-                <x-text-link class="absolute right-0 top-0" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </x-text-link>
+                <a class="absolute right-0 top-0 text-sm font-medium text-[var(--login-accent-primary)] hover:text-[var(--login-accent-hover)]" href="{{ route('password.request') }}" wire:navigate>
+                    {{ __('Lupa kata sandi?') }}
+                </a>
             @endif
         </div>
 
         <!-- Remember Me -->
-        <flux:checkbox wire:model="remember" label="{{ __('Remember me') }}" />
+        <flux:checkbox wire:model="remember" label="{{ __('Ingat saya') }}" />
 
-        <div class="flex items-center justify-end">
-            <flux:button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</flux:button>
+        <div class="flex items-center justify-end mt-2">
+            <flux:button variant="primary" type="submit" class="w-full">{{ __('Masuk') }}</flux:button>
         </div>
 
         @if (app()->isLocal())
-            <div class="flex flex-col gap-2 border-t border-zinc-200 pt-4 dark:border-zinc-800">
-                <p class="text-center text-xs font-semibold uppercase tracking-wider text-zinc-500">Dev Quick Login</p>
-                <div class="flex gap-2">
-                    <flux:button wire:click="devLogin('admin')" variant="subtle" class="flex-1">Admin</flux:button>
-                    <flux:button wire:click="devLogin('cashier')" variant="subtle" class="flex-1">Cashier</flux:button>
+            <div class="login-dev-strip flex flex-col gap-3 border-t pt-4">
+                <p class="text-center text-[0.6875rem] font-semibold uppercase tracking-[0.08em]">Login Cepat Dev</p>
+                <div class="flex gap-3">
+                    <flux:button wire:click="devLogin('admin')" variant="subtle" class="flex-1 !bg-[var(--login-surface-muted)] !text-[var(--login-text-primary)] hover:!bg-[var(--login-surface-secondary)] border-none">Admin</flux:button>
+                    <flux:button wire:click="devLogin('cashier')" variant="subtle" class="flex-1 !bg-[var(--login-surface-muted)] !text-[var(--login-text-primary)] hover:!bg-[var(--login-surface-secondary)] border-none">Cashier</flux:button>
                 </div>
             </div>
         @endif
     </form>
 
-    <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400">
-        Don't have an account?
-        <x-text-link href="{{ route('register') }}">Sign up</x-text-link>
+    <div class="login-register-prompt space-x-1 text-center text-sm">
+        Belum punya akun?
+        <a href="{{ route('register') }}" class="font-medium text-[var(--login-accent-primary)] hover:text-[var(--login-accent-hover)]" wire:navigate>Daftar</a>
     </div>
 </div>

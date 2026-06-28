@@ -13,38 +13,55 @@
 
             <flux:navbar class="-mb-px max-lg:hidden">
                 <flux:navbar.item icon="layout-grid" href="{{ route('dashboard') }}" :current="request()->routeIs('dashboard')" wire:navigate>
-                    Dashboard
+                    Dasbor
+                </flux:navbar.item>
+                <flux:navbar.item icon="shopping-cart" href="{{ route('transactions.pos') }}" :current="request()->routeIs('transactions.pos')" wire:navigate>
+                    POS
+                </flux:navbar.item>
+                <flux:navbar.item icon="banknotes" href="{{ route('transactions.index') }}" :current="request()->routeIs('transactions.index')" wire:navigate>
+                    Transaksi
                 </flux:navbar.item>
                 <flux:navbar.item icon="shopping-bag" href="{{ route('products.index') }}" :current="request()->routeIs('products.*')" wire:navigate>
-                    Products
+                    Produk
                 </flux:navbar.item>
                 <flux:navbar.item icon="archive-box" href="{{ route('inventory.index') }}" :current="request()->routeIs('inventory.*')" wire:navigate>
-                    Inventory
+                    Inventaris
                 </flux:navbar.item>
+                @if (auth()->user()->role === 'admin')
+                    <flux:navbar.item icon="receipt-percent" href="{{ route('expenses.index') }}" :current="request()->routeIs('expenses.*')" wire:navigate>
+                        Pengeluaran
+                    </flux:navbar.item>
+                    <flux:navbar.item icon="users" href="{{ route('users.index') }}" :current="request()->routeIs('users.*')" wire:navigate>
+                        Pengguna
+                    </flux:navbar.item>
+                    <flux:navbar.item icon="document-text" href="{{ route('audit-logs.index') }}" :current="request()->routeIs('audit-logs.*')" wire:navigate>
+                        Log Audit
+                    </flux:navbar.item>
+                @endif
             </flux:navbar>
 
             <flux:spacer />
 
             <flux:navbar class="mr-1.5 space-x-0.5 py-0!">
-                <flux:tooltip content="Search" position="bottom">
-                    <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="magnifying-glass" href="#" label="Search" />
+                <flux:tooltip content="Cari" position="bottom">
+                    <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="magnifying-glass" href="#" label="Cari" />
                 </flux:tooltip>
-                <flux:tooltip content="Repository" position="bottom">
+                <flux:tooltip content="Repositori" position="bottom">
                     <flux:navbar.item
                         class="h-10 max-lg:hidden [&>div>svg]:size-5"
                         icon="folder-git-2"
                         href="https://github.com/laravel/livewire-starter-kit"
                         target="_blank"
-                        label="Repository"
+                        label="Repositori"
                     />
                 </flux:tooltip>
-                <flux:tooltip content="Documentation" position="bottom">
+                <flux:tooltip content="Dokumentasi" position="bottom">
                     <flux:navbar.item
                         class="h-10 max-lg:hidden [&>div>svg]:size-5"
                         icon="book-open-text"
                         href="https://laravel.com/docs/starter-kits"
                         target="_blank"
-                        label="Documentation"
+                        label="Dokumentasi"
                     />
                 </flux:tooltip>
             </flux:navbar>
@@ -79,7 +96,7 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item href="/settings/profile" icon="cog" wire:navigate>Settings</flux:menu.item>
+                        <flux:menu.item href="/settings/profile" icon="cog" wire:navigate>Pengaturan</flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />
@@ -87,7 +104,7 @@
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
+                            {{ __('Keluar') }}
                         </flux:menu.item>
                     </form>
                 </flux:menu>
@@ -103,16 +120,33 @@
             </a>
 
             <flux:navlist variant="outline">
-                <flux:navlist.group heading="Platform">
+                <flux:navlist.group heading="Aplikasi">
                     <flux:navlist.item icon="layout-grid" href="{{ route('dashboard') }}" :current="request()->routeIs('dashboard')" wire:navigate>
-                        Dashboard
+                        Dasbor
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="shopping-cart" href="{{ route('transactions.pos') }}" :current="request()->routeIs('transactions.pos')" wire:navigate>
+                        POS
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="banknotes" href="{{ route('transactions.index') }}" :current="request()->routeIs('transactions.index')" wire:navigate>
+                        Transaksi
                     </flux:navlist.item>
                     <flux:navlist.item icon="shopping-bag" href="{{ route('products.index') }}" :current="request()->routeIs('products.*')" wire:navigate>
-                        Products
+                        Produk
                     </flux:navlist.item>
                     <flux:navlist.item icon="archive-box" href="{{ route('inventory.index') }}" :current="request()->routeIs('inventory.*')" wire:navigate>
-                        Inventory
+                        Inventaris
                     </flux:navlist.item>
+                    @if (auth()->user()->role === 'admin')
+                        <flux:navlist.item icon="receipt-percent" href="{{ route('expenses.index') }}" :current="request()->routeIs('expenses.*')" wire:navigate>
+                            Pengeluaran
+                        </flux:navlist.item>
+                        <flux:navlist.item icon="users" href="{{ route('users.index') }}" :current="request()->routeIs('users.*')" wire:navigate>
+                            Pengguna
+                        </flux:navlist.item>
+                        <flux:navlist.item icon="document-text" href="{{ route('audit-logs.index') }}" :current="request()->routeIs('audit-logs.*')" wire:navigate>
+                            Log Audit
+                        </flux:navlist.item>
+                    @endif
                 </flux:navlist.group>
             </flux:navlist>
 
@@ -120,11 +154,11 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    Repository
+                    Repositori
                 </flux:navlist.item>
 
                 <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits" target="_blank">
-                    Documentation
+                    Dokumentasi
                 </flux:navlist.item>
             </flux:navlist>
         </flux:sidebar>

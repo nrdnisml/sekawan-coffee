@@ -1,0 +1,48 @@
+Penjelasan ERD Database
+Gambaran Umum
+Aplikasi Sekawan Coffee dirancang sebagai sistem manajemen operasional coffee shop yang mengintegrasikan pengelolaan pengguna, produk, transaksi penjualan, stok, hingga pencatatan aktivitas sistem. Setiap entitas dalam database merepresentasikan bagian penting dari alur bisnis harian, mulai dari barista melayani pelanggan hingga admin memantau performa usaha.
+
+Narasi Alur Sistem
+Semua aktivitas dalam sistem diawali dari entitas users.
+Di Sekawan Coffee, setiap orang yang terlibat—baik admin, kasir, maupun owner—memiliki akun yang tersimpan di tabel ini. Data seperti nama, username, email, serta role menentukan hak akses masing-masing pengguna. Status aktif dan informasi autentikasi memastikan hanya user yang valid yang bisa mengoperasikan sistem.
+Ketika sistem mulai digunakan, setiap tindakan user akan tercatat dalam activity_logs.
+Misalnya saat kasir membuat transaksi, admin mengubah harga produk, atau ketika ada update data tertentu—semuanya direkam sebagai jejak audit. Ini penting untuk tracking dan accountability, terutama jika terjadi kesalahan atau investigasi.
+
+Pengelolaan Produk & Harga
+Produk yang dijual di coffee shop disimpan dalam entitas products.
+Di sini terdapat informasi seperti nama produk (contoh: Latte, Americano), harga, deskripsi, serta status aktif. Produk ini menjadi pusat dari hampir semua proses bisnis.
+Namun, harga produk tidak selalu statis. Oleh karena itu, sistem menyediakan product_price_histories.
+Setiap perubahan harga akan dicatat lengkap dengan siapa yang mengubah dan kapan perubahan itu terjadi. Ini memungkinkan analisis historis harga serta transparansi dalam pengambilan keputusan bisnis.
+
+Alur Transaksi Penjualan
+Ketika pelanggan melakukan pembelian, proses dimulai dengan pembuatan data pada entitas transactions.
+Transaksi ini mencatat informasi utama seperti kode transaksi, user (kasir) yang melayani, total belanja, jumlah pembayaran, metode pembayaran (cash, QRIS, dll), serta status transaksi.
+Setiap transaksi kemudian di-breakdown ke dalam transaction_items.
+Di sinilah detail item yang dibeli dicatat, seperti produk apa saja, harga saat transaksi, jumlah, dan subtotal. Dengan desain ini, satu transaksi bisa memiliki banyak item, mencerminkan pembelian multi-produk dalam satu order.
+
+Manajemen Stok
+Setiap pergerakan stok produk dikelola melalui entitas stock_movements.
+Ketika ada transaksi penjualan, stok akan berkurang. Sebaliknya, saat restock, stok akan bertambah. Sistem mencatat jenis pergerakan (in/out), jumlah, serta referensi ke transaksi atau aktivitas tertentu.
+Pendekatan ini membuat sistem tidak hanya menyimpan jumlah stok saat ini, tetapi juga histori pergerakan stok, yang sangat penting untuk audit dan analisis supply chain.
+
+Pencatatan Pengeluaran
+Selain pemasukan dari transaksi, Sekawan Coffee juga mencatat pengeluaran operasional melalui entitas expenses.
+Contohnya seperti pembelian bahan baku, biaya listrik, atau maintenance alat. Setiap pengeluaran dikaitkan dengan user yang mencatat serta tanggal kejadian.
+Dengan adanya data ini, sistem bisa memberikan gambaran profitabilitas yang lebih akurat, karena tidak hanya melihat revenue tetapi juga cost.
+
+Keterkaitan Antar Entitas
+Secara keseluruhan:
+users menjadi pusat relasi (siapa yang melakukan apa)
+products menjadi inti dari penjualan
+transactions dan transaction_items menangani proses bisnis utama (penjualan)
+stock_movements menjaga konsistensi inventori
+product_price_histories menjaga histori perubahan harga
+expenses mencatat arus kas keluar
+activity_logs menjadi jejak semua aktivitas sistem
+
+Penutup (untuk laporan)
+Dengan struktur ini, sistem Sekawan Coffee sudah mencerminkan praktik yang cukup solid untuk aplikasi POS dan manajemen coffee shop skala kecil hingga menengah. Desainnya sudah mendukung:
+audit trail (activity logs)
+histori data (harga & stok)
+modular transaksi
+pemisahan concern antara operasional dan finansial

@@ -2,13 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\Products\ProductForm;
+use App\Livewire\Products\ProductList;
 use App\Models\Product;
+use App\Models\Transaction;
 use App\Models\TransactionItem;
 use App\Models\User;
-use App\Livewire\Products\ProductList;
-use App\Livewire\Products\ProductForm;
-use Livewire\Livewire;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class ProductManagementTest extends TestCase
@@ -30,7 +33,7 @@ class ProductManagementTest extends TestCase
 
         $this->get(route('products.index'))
             ->assertStatus(200)
-            ->assertSee('Product Catalog');
+            ->assertSee('Katalog Produk');
     }
 
     public function test_can_toggle_product_status(): void
@@ -59,8 +62,8 @@ class ProductManagementTest extends TestCase
     public function test_cannot_delete_product_with_history(): void
     {
         $product = Product::factory()->create();
-        
-        $transaction = \App\Models\Transaction::create([
+
+        $transaction = Transaction::create([
             'transaction_code' => 'TRX-001',
             'user_id' => $this->user->id,
             'total_amount' => $product->price,
@@ -93,11 +96,15 @@ class ProductManagementTest extends TestCase
         Livewire::test(ProductForm::class)
             ->set('name', 'New Coffee')
             ->set('price', 5.50)
+            ->set('stock', 12)
             ->set('description', 'Delicious coffee')
             ->call('save')
             ->assertDispatched('product-saved');
 
-        $this->assertTrue(Product::where('name', 'New Coffee')->exists());
+        $this->assertDatabaseHas('products', [
+            'name' => 'New Coffee',
+            'stock' => 12,
+        ]);
     }
 
     public function test_can_filter_products_by_name(): void
@@ -113,9 +120,12 @@ class ProductManagementTest extends TestCase
 
     public function test_can_create_product_with_image(): void
     {
-        \Illuminate\Support\Facades\Storage::fake('public');
+        $disk = Storage::fake('public');
 
-        $file = \Illuminate\Http\UploadedFile::fake()->image('coffee.jpg');
+        $file = UploadedFile::fake()->createWithContent(
+            'coffee.png',
+            base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9WnSUs8AAAAASUVORK5CYII=')
+        );
 
         Livewire::test(ProductForm::class)
             ->set('name', 'Coffee with Image')
@@ -126,7 +136,60 @@ class ProductManagementTest extends TestCase
 
         $product = Product::where('name', 'Coffee with Image')->first();
         $this->assertNotNull($product->getRawOriginal('image_url'));
-        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($product->getRawOriginal('image_url'));
+        $this->assertTrue($disk->exists($product->getRawOriginal('image_url')));
+    }
+
+    public function test_product_image_url_can_be_loaded_from_local_storage_through_app_route(): void
+    {
+        $disk = Storage::fake('public');
+        $path = 'products/catalog-thumbnail.png';
+        $content = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9WnSUs8AAAAASUVORK5CYII=');
+
+        $disk->put($path, $content);
+
+        $product = Product::factory()->create([
+            'image_url' => $path,
+        ]);
+
+        $response = $this->get(parse_url($product->image_url, PHP_URL_PATH));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'image/png');
+        $this->assertSame($content, $response->getContent());
+    }
+
+    public function test_can_replace_product_image_on_edit_and_old_file_is_deleted(): void
+    {
+        $disk = Storage::fake('public');
+        $oldPath = 'products/old-image.png';
+        $disk->put($oldPath, 'old-image-content');
+
+        $product = Product::factory()->create([
+            'name' => 'Editable Coffee',
+            'image_url' => $oldPath,
+            'stock' => 3,
+        ]);
+
+        $newFile = UploadedFile::fake()->createWithContent(
+            'new-image.png',
+            base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9WnSUs8AAAAASUVORK5CYII=')
+        );
+
+        Livewire::test(ProductForm::class, ['productId' => $product->id])
+            ->set('name', 'Editable Coffee Updated')
+            ->set('price', 9.50)
+            ->set('stock', 7)
+            ->set('description', 'Updated description')
+            ->set('image', $newFile)
+            ->call('save')
+            ->assertDispatched('product-saved');
+
+        $product->refresh();
+
+        $this->assertSame(7, $product->stock);
+        $this->assertNotSame($oldPath, $product->getRawOriginal('image_url'));
+        $this->assertFalse($disk->exists($oldPath));
+        $this->assertTrue($disk->exists($product->getRawOriginal('image_url')));
     }
 
     public function test_can_sort_products_by_price(): void

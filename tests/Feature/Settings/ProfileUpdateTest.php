@@ -4,6 +4,7 @@ namespace Tests\Feature\Settings;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Volt;
 use Tests\TestCase;
 
@@ -68,8 +69,10 @@ class ProfileUpdateTest extends TestCase
             ->assertHasNoErrors()
             ->assertRedirect('/');
 
-        $this->assertNull($user->fresh());
-        $this->assertFalse(auth()->check());
+        $this->assertSoftDeleted('users', [
+            'id' => $user->id,
+        ]);
+        $this->assertFalse(Auth::check());
     }
 
     public function test_correct_password_must_be_provided_to_delete_account(): void

@@ -1,0 +1,61 @@
+- generic [active] [ref=e73]:
+  - generic [ref=e74]:
+    - link "Laravel Starter Kit" [ref=e75] [cursor=pointer]:
+      - /url: http://127.0.0.1:8081/dashboard
+      - img [ref=e77]
+      - generic [ref=e80]: Laravel Starter Kit
+    - navigation [ref=e81]:
+      - generic [ref=e82]:
+        - generic [ref=e84]: Aplikasi
+        - generic [ref=e85]:
+          - link "Dasbor" [ref=e86] [cursor=pointer]:
+            - /url: http://127.0.0.1:8081/dashboard
+            - img [ref=e88]
+            - generic [ref=e90]: Dasbor
+          - link "POS" [ref=e91] [cursor=pointer]:
+            - /url: http://127.0.0.1:8081/pos
+            - img [ref=e93]
+            - generic [ref=e95]: POS
+          - link "Transaksi" [ref=e96] [cursor=pointer]:
+            - /url: http://127.0.0.1:8081/transactions
+            - img [ref=e98]
+            - generic [ref=e100]: Transaksi
+          - link "Produk" [ref=e101] [cursor=pointer]:
+            - /url: http://127.0.0.1:8081/products
+            - img [ref=e103]
+            - generic [ref=e105]: Produk
+          - link "Inventaris" [ref=e106] [cursor=pointer]:
+            - /url: http://127.0.0.1:8081/inventory
+            - img [ref=e108]
+            - generic [ref=e110]: Inventaris
+          - link "Pengeluaran" [ref=e111] [cursor=pointer]:
+            - /url: http://127.0.0.1:8081/expenses
+            - img [ref=e113]
+            - generic [ref=e115]: Pengeluaran
+          - link "Pengguna" [ref=e116] [cursor=pointer]:
+            - /url: http://127.0.0.1:8081/users
+            - img [ref=e118]
+            - generic [ref=e120]: Pengguna
+          - link "Log Audit" [ref=e121] [cursor=pointer]:
+            - /url: http://127.0.0.1:8081/audit-logs
+            - img [ref=e123]
+            - generic [ref=e125]: Log Audit
+    - navigation [ref=e127]:
+      - link "Repositori" [ref=e128] [cursor=pointer]:
+        - /url: https://github.com/laravel/livewire-starter-kit
+        - img [ref=e130]
+        - generic [ref=e135]: Repositori
+      - link "Dokumentasi" [ref=e136] [cursor=pointer]:
+        - /url: https://laravel.com/docs/starter-kits
+        - img [ref=e138]
+        - generic [ref=e140]: Dokumentasi
+    - button "AS Admin Sekawan" [ref=e142]:
+      - generic [ref=e145]: AS
+      - generic [ref=e146]: Admin Sekawan
+      - img [ref=e148]
+  - generic [ref=e152]:
+    - generic [ref=e153]:
+      - img [ref=e155]
+      - img [ref=e158]
+      - img [ref=e161]
+    - img [ref=e164]

@@ -10,11 +10,15 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Volt\Component;
 
-new #[Layout('components.layouts.auth')] class extends Component {
+new #[Layout('components.layouts.auth')] class extends Component
+{
     #[Locked]
     public string $token = '';
+
     public string $email = '';
+
     public string $password = '';
+
     public string $password_confirmation = '';
 
     /**
@@ -69,7 +73,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-6">
-    <x-auth-header title="Reset password" description="Please enter your new password below" />
+    <x-auth-header title="Atur ulang kata sandi" description="Silakan masukkan kata sandi baru Anda di bawah" />
 
     <!-- Session Status -->
     <x-auth-session-status class="text-center" :status="session('status')" />
@@ -85,12 +89,12 @@ new #[Layout('components.layouts.auth')] class extends Component {
             <flux:input
                 wire:model="password"
                 id="password"
-                label="{{ __('Password') }}"
+                label="{{ __('Kata Sandi') }}"
                 type="password"
                 name="password"
                 required
                 autocomplete="new-password"
-                placeholder="Password"
+                placeholder="Kata sandi baru"
             />
         </div>
 
@@ -99,18 +103,18 @@ new #[Layout('components.layouts.auth')] class extends Component {
             <flux:input
                 wire:model="password_confirmation"
                 id="password_confirmation"
-                label="{{ __('Confirm password') }}"
+                label="{{ __('Konfirmasi kata sandi') }}"
                 type="password"
                 name="password_confirmation"
                 required
                 autocomplete="new-password"
-                placeholder="Confirm password"
+                placeholder="Konfirmasi kata sandi"
             />
         </div>
 
         <div class="flex items-center justify-end">
             <flux:button type="submit" variant="primary" class="w-full">
-                {{ __('Reset password') }}
+                {{ __('Atur ulang kata sandi') }}
             </flux:button>
         </div>
     </form>

@@ -4,10 +4,13 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new class extends Component {
+new #[Layout('components.layouts.app')] class extends Component
+{
     public string $name = '';
+
     public string $email = '';
 
     /**
@@ -15,8 +18,11 @@ new class extends Component {
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        /** @var User $user */
+        $user = Auth::user();
+
+        $this->name = $user->name;
+        $this->email = $user->email ?? '';
     }
 
     /**
@@ -24,6 +30,7 @@ new class extends Component {
      */
     public function updateProfileInformation(): void
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $validated = $this->validate([
@@ -35,7 +42,7 @@ new class extends Component {
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($user->id)
+                Rule::unique(User::class)->ignore($user->id),
             ],
         ]);
 
@@ -55,6 +62,7 @@ new class extends Component {
      */
     public function resendVerificationNotification(): void
     {
+        /** @var User $user */
         $user = Auth::user();
 
         if ($user->hasVerifiedEmail()) {
@@ -72,9 +80,9 @@ new class extends Component {
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <x-settings.layout heading="Profile" subheading="Update your name and email address">
+    <x-settings.layout heading="Profil" subheading="Perbarui nama dan alamat email Anda">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <flux:input wire:model="name" label="{{ __('Name') }}" type="text" name="name" required autofocus autocomplete="name" />
+            <flux:input wire:model="name" label="{{ __('Nama') }}" type="text" name="name" required autofocus autocomplete="name" />
 
             <div>
                 <flux:input wire:model="email" label="{{ __('Email') }}" type="email" name="email" required autocomplete="email" />
@@ -82,19 +90,19 @@ new class extends Component {
                 @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail &&! auth()->user()->hasVerifiedEmail())
                     <div>
                         <p class="mt-2 text-sm text-gray-800">
-                            {{ __('Your email address is unverified.') }}
+                            {{ __('Alamat email Anda belum terverifikasi.') }}
 
                             <button
                                 wire:click.prevent="resendVerificationNotification"
                                 class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
-                                {{ __('Click here to re-send the verification email.') }}
+                                {{ __('Klik di sini untuk mengirim ulang email verifikasi.') }}
                             </button>
                         </p>
 
                         @if (session('status') === 'verification-link-sent')
                             <p class="mt-2 text-sm font-medium text-green-600">
-                                {{ __('A new verification link has been sent to your email address.') }}
+                                {{ __('Tautan verifikasi baru telah dikirim ke alamat email Anda.') }}
                             </p>
                         @endif
                     </div>
@@ -103,11 +111,11 @@ new class extends Component {
 
             <div class="flex items-center gap-4">
                 <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
+                    <flux:button variant="primary" type="submit" class="w-full">{{ __('Simpan') }}</flux:button>
                 </div>
 
                 <x-action-message class="me-3" on="profile-updated">
-                    {{ __('Saved.') }}
+                    {{ __('Tersimpan.') }}
                 </x-action-message>
             </div>
         </form>
